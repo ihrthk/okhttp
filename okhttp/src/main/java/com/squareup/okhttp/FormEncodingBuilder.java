@@ -22,38 +22,42 @@ import okio.Buffer;
  * 2.0</a>-compliant form data.
  */
 public final class FormEncodingBuilder {
-  private static final MediaType CONTENT_TYPE =
-      MediaType.parse("application/x-www-form-urlencoded");
+    private static final MediaType CONTENT_TYPE =
+            MediaType.parse("application/x-www-form-urlencoded");
 
-  private final Buffer content = new Buffer();
+    private final Buffer content = new Buffer();
 
-  /** Add new key-value pair. */
-  public FormEncodingBuilder add(String name, String value) {
-    if (content.size() > 0) {
-      content.writeByte('&');
+    /**
+     * Add new key-value pair.
+     */
+    public FormEncodingBuilder add(String name, String value) {
+        if (content.size() > 0) {
+            content.writeByte('&');
+        }
+        HttpUrl.canonicalize(content, name, 0, name.length(),
+                HttpUrl.FORM_ENCODE_SET, false, true);
+        content.writeByte('=');
+        HttpUrl.canonicalize(content, value, 0, value.length(),
+                HttpUrl.FORM_ENCODE_SET, false, true);
+        return this;
     }
-    HttpUrl.canonicalize(content, name, 0, name.length(),
-        HttpUrl.FORM_ENCODE_SET, false, true);
-    content.writeByte('=');
-    HttpUrl.canonicalize(content, value, 0, value.length(),
-        HttpUrl.FORM_ENCODE_SET, false, true);
-    return this;
-  }
 
-  /** Add new key-value pair. */
-  public FormEncodingBuilder addEncoded(String name, String value) {
-    if (content.size() > 0) {
-      content.writeByte('&');
+    /**
+     * Add new key-value pair.
+     */
+    public FormEncodingBuilder addEncoded(String name, String value) {
+        if (content.size() > 0) {
+            content.writeByte('&');
+        }
+        HttpUrl.canonicalize(content, name, 0, name.length(),
+                HttpUrl.FORM_ENCODE_SET, true, true);
+        content.writeByte('=');
+        HttpUrl.canonicalize(content, value, 0, value.length(),
+                HttpUrl.FORM_ENCODE_SET, true, true);
+        return this;
     }
-    HttpUrl.canonicalize(content, name, 0, name.length(),
-        HttpUrl.FORM_ENCODE_SET, true, true);
-    content.writeByte('=');
-    HttpUrl.canonicalize(content, value, 0, value.length(),
-        HttpUrl.FORM_ENCODE_SET, true, true);
-    return this;
-  }
 
-  public RequestBody build() {
-    return RequestBody.create(CONTENT_TYPE, content.snapshot());
-  }
+    public RequestBody build() {
+        return RequestBody.create(CONTENT_TYPE, content.snapshot());
+    }
 }

@@ -23,11 +23,13 @@ import java.io.IOException;
  * on the request or response.
  */
 public interface Interceptor {
-  Response intercept(Chain chain) throws IOException;
+    Response intercept(Chain chain) throws IOException;
 
-  interface Chain {
-    Request request();
-    Response proceed(Request request) throws IOException;
-    Connection connection();
-  }
+    interface Chain {
+        Request request();
+
+        Response proceed(Request request) throws IOException;
+
+        Connection connection();
+    }
 }
